@@ -17,11 +17,11 @@ headers = {
     "Authorization": f"Bearer {api_key}",
     "Content-Type": "application/json"
 }
-data = {
-    "post": "Good Morning",  # Mandatory
-    "platforms": ["linkedin", "facebook"],
+payload = {
+    "post": "Good Night everyone, What are you doing?",  # Mandatory
+    "platforms": ["facebook"],
     "mediaUrls": ["https://img.ayrshare.com/012/gb.jpg"]
 }
 
-response = requests.post(url, json=data, headers=headers)
+response = requests.post(url, json=payload, headers=headers)
 print(response.json())
