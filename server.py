@@ -83,7 +83,7 @@ def generate_jwt(data: JWTRequest):
     }
     payload = {
         "domain": "ACME",  # Change to your custom domain if needed
-        "privateKey": PRIVATE_KEY,
+        "privateKey": PRIVATE_KEY, #paid
         "profileKey": data.profileKey,
         # "redirect":
         # "allowedSocial":["facebook", "x", "linkedin", "tiktok"]
@@ -116,6 +116,27 @@ def post_by_profile(data: PostRequest):
         return response.json()
     except requests.exceptions.RequestException as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+@app.get("/active-social-accounts")
+def get_active_social_accounts(): #data:JWTRequest
+    headers = {
+        "Authorization": f"Bearer {API_KEY}"
+        # "Profile-Key": data.profileKey
+    }
+    url = f"{API_URL}/user"
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        user_data = response.json()
+        # return user_data
+        
+        # Only return the active social accounts
+        return {
+            "activeSocialAccounts": user_data.get("activeSocialAccounts", [])
+        }
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=500, detail=f"Request failed: {str(e)}")
     
 
 # uvicorn server:app --reload 
