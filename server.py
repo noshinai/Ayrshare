@@ -139,4 +139,4 @@ def get_active_social_accounts(): #data:JWTRequest
         raise HTTPException(status_code=500, detail=f"Request failed: {str(e)}")
     
 
-# uvicorn server:app --reload 
+# uvicorn server2:app --reload 

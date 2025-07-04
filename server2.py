@@ -29,6 +29,9 @@ HEADERS = {
     "Authorization": f"Bearer {API_KEY}"
 }
 
+# print("[DEBUG] DATABASE_URL =", repr(DATABASE_URL))
+
+
 # --- DATABASE CONFIG ---
 Base = declarative_base()
 engine = create_engine(DATABASE_URL)
@@ -76,6 +79,7 @@ class PostRequest(BaseModel):
     post: str
     platforms: list[str]
     mediaUrls: list[str] = []
+    scheduleDate: str = None  # Optional, can be used for scheduling posts
 
 class ProfileRequest(BaseModel):
     title: str
@@ -90,7 +94,6 @@ class TogglePlatformRequest(BaseModel):
     enabled: bool
 
 
-# --- API ROUTES ---
 @app.post("/create-profile")
 def create_profile(data: ProfileRequest, db: Session = Depends(get_db)):
     # Create profile via Ayrshare
@@ -177,8 +180,13 @@ def post_by_profile(data: PostRequest):
         payload = {
             "post": data.post,
             "platforms": data.platforms,
-            "mediaUrls": data.mediaUrls
+            "mediaUrls": data.mediaUrls or [],
         }
+
+        # Add scheduleDate only if it's provided
+        if data.scheduleDate:
+            payload["scheduleDate"] = data.scheduleDate
+            
         response = requests.post(f"{API_URL}/post", json=payload, headers=headers)
         response.raise_for_status()
         return response.json()
